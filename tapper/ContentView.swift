@@ -10,6 +10,7 @@ import SwiftUI
 
 struct ContentView: View {
     @State var taps: Int = 0
+    @State var header = "TAPPER!"
 
     var body: some View {
         GeometryReader { geometry in
@@ -17,7 +18,20 @@ struct ContentView: View {
                 Color.purple
                     .ignoresSafeArea()
             VStack {
-                
+                Spacer()
+                ZStack {
+                    Image(systemName: "bubble.middle.bottom.fill")
+                        .resizable()
+                        .symbolRenderingMode(.monochrome)
+                        .foregroundStyle(.white)
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: geometry.size.width * 0.4)
+                        .shadow(color: .black, radius: 5, x: 0, y: 5)
+                    Text(header)
+                        .font(.largeTitle)
+                        .fontWeight(.bold)
+                        .foregroundColor(.black)
+                }
                 Spacer()
                 Label("\(taps)", systemImage: "hand.tap.fill")
                     .foregroundColor(.white)
