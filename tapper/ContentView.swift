@@ -13,9 +13,9 @@ struct ContentView: View {
     @State var header = "TAPPER!"
     @State var taps = 0
     @State private var timeRemaining = 20
-    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
     @State var gamePlaying = false
     @State private var isActive = false
+    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
     var body: some View {
         GeometryReader { geometry in
@@ -33,12 +33,13 @@ struct ContentView: View {
                             .symbolRenderingMode(.monochrome)
                             .foregroundStyle(.white)
                             .aspectRatio(contentMode: .fit)
-                            .frame(width: geometry.size.width * 0.4)
+                            .frame(width: geometry.size.width * 0.45)
                             .shadow(color: .black, radius: 5, x: 0, y: 5)
                         Text(header)
-                            .font(.largeTitle)
+                            .font(.system(.title, design: .rounded))
                             .fontWeight(.bold)
                             .foregroundColor(.black)
+                            .multilineTextAlignment(.center)
                     }
                 }
                 
@@ -60,7 +61,7 @@ struct ContentView: View {
                 // Score
                 Label("\(taps)", systemImage: "hand.tap.fill")
                     .foregroundColor(.white)
-                    .font(.largeTitle)
+                    .font(.system(.largeTitle, design: .rounded))
                     .padding()
                     .border(.yellow, width: 7)
                     .cornerRadius(7)
@@ -108,8 +109,7 @@ struct ContentView: View {
                     if self.timeRemaining > 0 {
                         self.timeRemaining -= 1
                     } else {
-                        gamePlaying = false
-                        isActive = false
+                        endGame()
                     }
                 }
             // set to inactive when app moves to background
@@ -123,14 +123,28 @@ struct ContentView: View {
     }
     
     func startGame() {
+        // reset time and taps
         taps = 0
         timeRemaining = 20
+        // ∆ game state
         gamePlaying = true
         isActive = true
     }
+    
+    func endGame() {
+        // retrieve existing saved high score and update if new score is higher
+        let highScore = UserDefaults.standard.integer(forKey: "HighScore")
+            if (taps > highScore) {
+                UserDefaults.standard.set(taps, forKey: "HighScore")
+                header = "New High\nScore!"
+            } else {
+                header = "TAPPER!"
+            }
+        // ∆ game state
+        gamePlaying = false
+        isActive = false
+    }
 }
-
-
 
 struct ContentView_Previews: PreviewProvider {
     static var previews: some View {
